@@ -10,14 +10,9 @@ upstream frontend_backend {
     server excalidraw:80 resolve;
 }
 
-upstream storage_backend {
-    zone storage_backend 64k;
-    server storage:18474 resolve;
-}
-
-upstream room_backend {
-    zone room_backend 64k;
-    server room:18475 resolve;
+upstream application_backend {
+    zone application_backend 64k;
+    server backend:18474 resolve;
 }
 
 server {
@@ -66,24 +61,22 @@ server {
         proxy_pass http://frontend_backend;
     }
 
-    location = /storage {
-        return 308 /storage/;
+    location = /api {
+        return 308 /api/;
     }
 
-    # The trailing slash removes /storage/ while preserving /api/v2/... .
-    location /storage/ {
-        proxy_pass http://storage_backend/;
-        proxy_read_timeout 120s;
-        proxy_send_timeout 120s;
-        proxy_hide_header Access-Control-Allow-Origin;
-        proxy_hide_header Access-Control-Allow-Credentials;
+    # ExcaliDash's backend routes omit the frontend's /api/ prefix.
+    location /api/ {
+        proxy_pass http://application_backend/;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
         add_header Cache-Control "no-store" always;
         add_header X-Content-Type-Options nosniff always;
         add_header Referrer-Policy strict-origin-when-cross-origin always;
     }
 
     location /socket.io/ {
-        proxy_pass http://room_backend;
+        proxy_pass http://application_backend;
         # These must accompany local proxy_set_header directives for inheritance.
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;

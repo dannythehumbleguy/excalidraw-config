@@ -1,7 +1,7 @@
 .PHONY: run down ssl ssl-renew logs logs-app restart
 
 run:
-	docker compose up -d
+	docker compose up -d --remove-orphans
 
 down:
 	docker compose down
@@ -19,7 +19,7 @@ logs:
 	docker compose logs -f
 
 logs-app:
-	docker compose logs -f excalidraw
+	docker compose logs -f excalidraw backend
 
 restart:
-	docker compose restart excalidraw nginx
+	docker compose restart backend excalidraw nginx

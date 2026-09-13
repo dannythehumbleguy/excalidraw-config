@@ -5,3 +5,4 @@ certs/*
 !certs/.gitkeep
 backups/
 data/
+.test/
