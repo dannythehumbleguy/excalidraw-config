@@ -1,0 +1,9 @@
+services:
+  nginx:
+    profiles: [container-nginx]
+  excalidraw:
+    ports:
+      - "127.0.0.1:18080:80"
+  backend:
+    ports:
+      - "127.0.0.1:18081:18474"
